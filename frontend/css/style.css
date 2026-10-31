@@ -1,0 +1,75 @@
+body {
+    background: #f4f6fb;
+    font-family: Arial, sans-serif;
+    color: #202b3c;
+}
+
+.navbar {
+    background: #14213d;
+}
+
+.navbar-brand,
+.nav-link {
+    color: white !important;
+}
+
+.container {
+    margin-top: 35px;
+}
+
+.card {
+    border: none;
+    border-radius: 14px;
+    box-shadow: 0 3px 14px rgba(0, 0, 0, 0.07);
+    margin-bottom: 20px;
+}
+
+.card-body {
+    padding: 25px;
+}
+
+.btn-primary {
+    background: #3157d5;
+    border: none;
+}
+
+.btn-primary:hover {
+    background: #203fa9;
+}
+
+.form-control,
+.form-select {
+    padding: 11px;
+    border-radius: 8px;
+}
+
+.table {
+    background: white;
+    vertical-align: middle;
+}
+
+h2 {
+    font-weight: 700;
+    margin-bottom: 25px;
+}
+
+.stat-number {
+    font-size: 28px;
+    font-weight: bold;
+    color: #3157d5;
+}
+
+.login-card {
+    max-width: 430px;
+    margin: 80px auto;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
+}
