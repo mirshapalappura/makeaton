@@ -1,60 +1,67 @@
 // frontend/js/auth.js
 
-// LOGIN
 const loginForm = document.getElementById("loginForm");
 
 if (loginForm) {
     loginForm.addEventListener("submit", async (event) => {
         event.preventDefault();
 
-        const email = document.getElementById("email").value;
+        const email = document.getElementById("email").value.trim();
         const password = document.getElementById("password").value;
         const message = document.getElementById("message");
 
         try {
-            const result = await API.login({
-                email,
-                password
-            });
+            const result = await API.login({ email, password });
 
-            message.textContent = result.message;
+            message.textContent = "Login successful!";
+            message.className = "text-success mt-3";
 
-            // Go to dashboard after successful login
-            window.location.href = "/dashboard.html";
+            const role = result.user.role;
+
+            if (role === "admin") {
+                window.location.href = "/admin-dashboard.html";
+            } else if (role === "staff") {
+                window.location.href = "/staff-dashboard.html";
+            } else if (role === "customer") {
+                window.location.href = "/customer-dashboard.html";
+            } else {
+                message.textContent = "Unknown user role.";
+            }
 
         } catch (error) {
             message.textContent = error.message;
+            message.className = "text-danger mt-3";
         }
     });
 }
 
 
 // REGISTRATION
+
 const registerForm = document.getElementById("registerForm");
 
 if (registerForm) {
     registerForm.addEventListener("submit", async (event) => {
         event.preventDefault();
 
-        const name = document.getElementById("name").value;
-        const email = document.getElementById("email").value;
+        const name = document.getElementById("name").value.trim();
+        const email = document.getElementById("email").value.trim();
         const password = document.getElementById("password").value;
         const message = document.getElementById("message");
 
         try {
-            const result = await API.register({
-                name,
-                email,
-                password
-            });
+            await API.register({ name, email, password });
 
-            message.textContent = result.message;
+            message.textContent = "Registration successful!";
+            message.className = "text-success mt-3";
 
-            // Redirect to login
-            window.location.href = "/login.html";
+            setTimeout(() => {
+                window.location.href = "/login.html";
+            }, 1000);
 
         } catch (error) {
             message.textContent = error.message;
+            message.className = "text-danger mt-3";
         }
     });
 }

@@ -70,11 +70,17 @@ def me():
         return jsonify({"error": "Not logged in"}), 401
 
     db = get_db()
+
     user = db.execute(
         "SELECT id, name, email, role FROM users WHERE id = ?",
         (session["user_id"],)
     ).fetchone()
+
     db.close()
+
+    if not user:
+        session.clear()
+        return jsonify({"error": "User not found"}), 401
 
     return jsonify(dict(user))
 
