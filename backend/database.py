@@ -1,8 +1,14 @@
 import sqlite3
 import os
+from pathlib import Path
 from werkzeug.security import generate_password_hash
 from config import Config
+
 DATABASE = Config.DATABASE
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+SCHEMA_PATH = BASE_DIR / "database" / "schema.sql"
+SAMPLE_PATH = BASE_DIR / "database" / "sample_data.sql"
 
 
 def get_db():
@@ -13,16 +19,14 @@ def get_db():
 
 
 def init_db():
-    os.makedirs(os.path.dirname(DATABASE), exist_ok=True)
+    os.makedirs(os.path.dirname(os.path.abspath(DATABASE)), exist_ok=True)
 
     db = get_db()
 
-    base_dir = os.path.dirname(DATABASE)
-
-    with open(os.path.join(base_dir, "schema.sql"), encoding="utf-8") as f:
+    with open(SCHEMA_PATH, encoding="utf-8") as f:
         db.executescript(f.read())
 
-    with open(os.path.join(base_dir, "sample_data.sql"), encoding="utf-8") as f:
+    with open(SAMPLE_PATH, encoding="utf-8") as f:
         db.executescript(f.read())
 
     admin = db.execute(
@@ -43,6 +47,9 @@ def init_db():
 
     db.commit()
     db.close()
-    if __name__ == "__main__":
-        init_db()
-        print("Database initialized successfully!")
+
+    print("Database initialized successfully!")
+
+
+if __name__ == "__main__":
+    init_db()
