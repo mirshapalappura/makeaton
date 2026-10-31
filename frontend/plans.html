@@ -1,69 +1,77 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Brightloop | Plans</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscription Plans | Brightloop</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-<nav class="navbar navbar-dark p-3">
-    <a class="navbar-brand" href="dashboard.html">Brightloop</a>
-    <a class="nav-link" href="dashboard.html">Dashboard</a>
-</nav>
 
-<div class="container">
-    <h2>Subscription Plans</h2>
-
-    <div class="card">
-        <div class="card-body">
-            <input id="plan-name" class="form-control mb-2" placeholder="Plan name">
-            <input id="plan-price" type="number" class="form-control mb-2" placeholder="Price">
-            <select id="cycle" class="form-select mb-2">
-                <option value="monthly">Monthly</option>
-                <option value="yearly">Yearly</option>
-            </select>
-            <input id="plan-description" class="form-control mb-3" placeholder="Description">
-            <button class="btn btn-primary" onclick="addPlan()">Add plan</button>
+    <nav class="navbar navbar-dark">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/dashboard.html">Brightloop</a>
+            <a class="btn btn-outline-light btn-sm" href="/dashboard.html">Dashboard</a>
         </div>
-    </div>
+    </nav>
 
-    <div class="card">
-        <div class="card-body table-responsive">
-            <table class="table">
-                <thead><tr><th>Name</th><th>Price</th><th>Cycle</th><th>Description</th></tr></thead>
-                <tbody id="plan-list"></tbody>
-            </table>
+    <main class="container">
+        <h2 class="text-center">Subscription Plans</h2>
+        <p class="text-center text-muted">
+            Preview of our sample subscription plans.
+        </p>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <h4>Basic Monthly</h4>
+                        <p class="stat-number">₹999</p>
+                        <p class="text-muted">Per month</p>
+                        <p>Monthly subscription</p>
+                        <a href="/subscriptions.html" class="btn btn-primary">
+                            View Subscriptions
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <h4>Professional Yearly</h4>
+                        <p class="stat-number">₹9,999</p>
+                        <p class="text-muted">Per year</p>
+                        <p>Annual subscription</p>
+                        <a href="/subscriptions.html" class="btn btn-primary">
+                            View Subscriptions
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <h4>Premium Monthly</h4>
+                        <p class="stat-number">₹1,999</p>
+                        <p class="text-muted">Per month</p>
+                        <p>Premium monthly plan</p>
+                        <a href="/subscriptions.html" class="btn btn-primary">
+                            View Subscriptions
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
 
-<script src="js/auth.js"></script>
-<script>
-async function loadPlansPage() {
-    const plans = await api("/api/plans");
-    document.getElementById("plan-list").innerHTML = plans.map(p => `
-        <tr><td>${p.name}</td><td>₹${p.price}</td>
-        <td>${p.billing_cycle}</td><td>${p.description || ""}</td></tr>
-    `).join("");
-}
+        <div class="alert alert-info mt-4">
+            This is a static plan preview. Live plan loading and plan selection
+            require an additional backend endpoint.
+        </div>
+    </main>
 
-async function addPlan() {
-    try {
-        await api("/api/plans", "POST", {
-            name: document.getElementById("plan-name").value,
-            price: document.getElementById("plan-price").value,
-            billing_cycle: document.getElementById("cycle").value,
-            description: document.getElementById("plan-description").value
-        });
-        alert("Plan added");
-        loadPlansPage();
-    } catch (error) {
-        alert(error.message);
-    }
-}
-
-loadPlansPage();
-</script>
 </body>
 </html>

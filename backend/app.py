@@ -1,30 +1,47 @@
-from flask import Flask
+from pathlib import Path
+from flask import Flask, send_from_directory
+
 from .config import Config
-from .database import init_app
-from .products import products_bp
+from .auth import auth
+from .products import products
+from .subscriptions import subscriptions
+from .invoices import invoices
+from .payments import payments
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+FRONTEND_DIR = BASE_DIR / "frontend"
 
 
 def create_app():
-    app = Flask(__name__)
+    app = Flask(
+        __name__,
+        static_folder=str(FRONTEND_DIR),
+        static_url_path=""
+    )
 
     app.config.from_object(Config)
 
-    init_app(app)
+    # Register backend APIs
+    app.register_blueprint(auth)
+    app.register_blueprint(products)
+    app.register_blueprint(subscriptions)
+    app.register_blueprint(invoices)
+    app.register_blueprint(payments)
 
-    app.register_blueprint(products_bp)
-
+    # Open the frontend
     @app.route("/")
     def home():
-        return {
-            "message": "Makeaton Subscription Management API",
-            "status": "running"
-        }
+        return send_from_directory(FRONTEND_DIR, "login.html")
+
+    # Serve frontend HTML pages
+    @app.route("/<page>.html")
+    def html_page(page):
+        return send_from_directory(FRONTEND_DIR, f"{page}.html")
 
     return app
 
 
 app = create_app()
-
 
 if __name__ == "__main__":
     app.run(debug=app.config["DEBUG"])

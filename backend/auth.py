@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, session
 from werkzeug.security import generate_password_hash, check_password_hash
-from database import get_db
+from .database import get_db
 
 auth = Blueprint("auth", __name__, url_prefix="/api/auth")
 

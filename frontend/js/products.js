@@ -1,35 +1,44 @@
+// frontend/js/products.js
+
 async function loadProducts() {
-    const products = await api("/api/products");
+    const table = document.getElementById("productsTable");
+    const message = document.getElementById("message");
 
-    const table = document.getElementById("product-list");
-
-    table.innerHTML = products.map(product => `
-        <tr>
-            <td>${product.name}</td>
-            <td>${product.description || ""}</td>
-            <td>₹${product.price}</td>
-            <td>${product.tax_rate}%</td>
-        </tr>
-    `).join("");
-}
-
-async function addProduct() {
     try {
-        await api("/api/products", "POST", {
-            name: document.getElementById("product-name").value,
-            description: document.getElementById("description").value,
-            price: document.getElementById("price").value,
-            tax_rate: document.getElementById("tax").value
+        const products = await API.getProducts();
+
+        table.innerHTML = "";
+
+        if (products.length === 0) {
+            message.textContent = "No products available.";
+            return;
+        }
+
+        message.textContent = "";
+
+        products.forEach((product) => {
+            const row = document.createElement("tr");
+
+            const values = [
+                product.id,
+                product.name,
+                product.description || "",
+                "₹" + Number(product.price).toFixed(2),
+                product.tax_rate + "%"
+            ];
+
+            values.forEach((value) => {
+                const cell = document.createElement("td");
+                cell.textContent = value;
+                row.appendChild(cell);
+            });
+
+            table.appendChild(row);
         });
 
-        alert("Product added");
-        loadProducts();
-
     } catch (error) {
-        alert(error.message);
+        message.textContent = "Error: " + error.message;
     }
 }
 
-if (document.getElementById("product-list")) {
-    loadProducts();
-}
+loadProducts();

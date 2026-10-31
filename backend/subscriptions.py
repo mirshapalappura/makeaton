@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, session
-from database import get_db
+from .database import get_db
 from datetime import date, timedelta
 import calendar
 

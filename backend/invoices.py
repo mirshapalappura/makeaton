@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, session
-from database import get_db
+from .database import get_db
 from datetime import date, timedelta
 
 invoices = Blueprint("invoices", __name__, url_prefix="/api/invoices")

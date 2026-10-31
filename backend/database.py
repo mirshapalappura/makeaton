@@ -2,7 +2,7 @@ import sqlite3
 import os
 from pathlib import Path
 from werkzeug.security import generate_password_hash
-from config import Config
+from .config import Config
 
 DATABASE = Config.DATABASE
 
