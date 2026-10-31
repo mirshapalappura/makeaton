@@ -1,55 +1,48 @@
 import sqlite3
-from flask import current_app, g
+import os
+from werkzeug.security import generate_password_hash
+from config import Config
+DATABASE = Config.DATABASE
 
 
 def get_db():
-    """Connect to SQLite database."""
-
-    if "db" not in g:
-        g.db = sqlite3.connect(
-            current_app.config["DATABASE"]
-        )
-
-        g.db.row_factory = sqlite3.Row
-        g.db.execute("PRAGMA foreign_keys = ON")
-
-    return g.db
-
-
-def close_db(error=None):
-    """Close the database connection."""
-
-    db = g.pop("db", None)
-
-    if db is not None:
-        db.close()
+    connection = sqlite3.connect(DATABASE, timeout=10)
+    connection.row_factory = sqlite3.Row
+    connection.execute("PRAGMA foreign_keys = ON")
+    return connection
 
 
 def init_db():
-    """Create the products table."""
+    os.makedirs(os.path.dirname(DATABASE), exist_ok=True)
 
     db = get_db()
 
-    db.execute("""
-        CREATE TABLE IF NOT EXISTS products (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            type TEXT NOT NULL,
-            sales_price REAL NOT NULL CHECK(sales_price >= 0),
-            cost_price REAL NOT NULL DEFAULT 0
-                CHECK(cost_price >= 0),
-            notes TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
+    base_dir = os.path.dirname(DATABASE)
+
+    with open(os.path.join(base_dir, "schema.sql"), encoding="utf-8") as f:
+        db.executescript(f.read())
+
+    with open(os.path.join(base_dir, "sample_data.sql"), encoding="utf-8") as f:
+        db.executescript(f.read())
+
+    admin = db.execute(
+        "SELECT id FROM users WHERE email = ?",
+        ("admin@brightloop.com",)
+    ).fetchone()
+
+    if not admin:
+        db.execute("""
+            INSERT INTO users (name, email, password, role)
+            VALUES (?, ?, ?, ?)
+        """, (
+            "Brightloop Admin",
+            "admin@brightloop.com",
+            generate_password_hash("Admin@12345"),
+            "admin"
+        ))
 
     db.commit()
-
-
-def init_app(app):
-    """Initialize database with Flask application."""
-
-    app.teardown_appcontext(close_db)
-
-    with app.app_context():
+    db.close()
+    if __name__ == "__main__":
         init_db()
+        print("Database initialized successfully!")
